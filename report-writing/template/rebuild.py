@@ -8,7 +8,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SOURCES = {"Makefile", "pyproject.toml", "uv.lock"}
-EXTENSIONS = {".md", ".py", ".csv", ".json", ".yaml", ".yml", ".tex"}
+EXTENSIONS = {
+    ".md", ".py", ".csv", ".tsv", ".parquet", ".json",
+    ".yaml", ".yml", ".tex", ".bib", ".png", ".jpg", ".svg",
+}
 SKIP = {".venv", ".git", "__pycache__", ".ruff_cache", "figures", "out"}
 
 
