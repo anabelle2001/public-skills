@@ -9,16 +9,30 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 SOURCES = {"Makefile", "pyproject.toml", "uv.lock"}
 EXTENSIONS = {
-    ".md", ".py", ".csv", ".tsv", ".parquet", ".json",
-    ".yaml", ".yml", ".tex", ".bib", ".png", ".jpg", ".svg",
+    ".md",
+    ".py",
+    ".csv",
+    ".tsv",
+    ".parquet",
+    ".json",
+    ".yaml",
+    ".yml",
+    ".tex",
+    ".bib",
+    ".png",
+    ".jpg",
+    ".svg",
 }
-SKIP = {".venv", ".git", "__pycache__", ".ruff_cache", "figures", "out"}
+SKIP = {".venv", ".git", "__pycache__", ".ruff_cache", "out"}
 
 
 def snapshot() -> dict[str, tuple[int, int]]:
     result = {}
     for path in ROOT.rglob("*"):
-        if any(part in SKIP or part.startswith(".") for part in path.relative_to(ROOT).parts[:-1]):
+        if any(
+            part in SKIP or part.startswith(".")
+            for part in path.relative_to(ROOT).parts[:-1]
+        ):
             continue
         if path.is_file() and (path.name in SOURCES or path.suffix in EXTENSIONS):
             stat = path.stat()

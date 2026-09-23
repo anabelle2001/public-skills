@@ -15,7 +15,7 @@ Describe the measurements and analysis.
 
 # Results
 
-![Example result with units and a useful takeaway.](figures/example_figure.pdf){width=85%}
+![Example result with units and a useful takeaway.](paper/out/img/example_figure.pdf){width=85%}
 
 # Conclusions
 

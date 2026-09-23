@@ -1,27 +1,34 @@
-# Set REPORT to the Markdown stem, and FIGURES to Python stems (without .py).
-REPORT := report
+# Set FIGURES to the stems of scripts in paper/src/ (without .py).
 FIGURES := example_figure
-DATA := data.csv
-PYTHON_RUN := uv run --no-sync python
+DATA := data/results.csv
+UTIL := $(wildcard paper/src/util/*.py)
+PYTHON_RUN := uv run python
 PANDOC := pandoc
 PDF_ENGINE := xelatex
 
-FIGURE_PDFS := $(addprefix figures/,$(addsuffix .pdf,$(FIGURES)))
+FIGURE_PDFS := $(addprefix paper/out/img/,$(addsuffix .pdf,$(FIGURES)))
 
+.DEFAULT_GOAL := all
 .PHONY: all figures clean
-all: $(REPORT).pdf
+all: REPORT.pdf
 figures: $(FIGURE_PDFS)
 
-$(REPORT).pdf: $(REPORT).md $(FIGURE_PDFS)
+REPORT.pdf: paper/out/REPORT.pdf
+	$(PYTHON_RUN) -c "from shutil import copyfile; copyfile('paper/out/REPORT.pdf', 'REPORT.pdf')"
+
+paper/out/REPORT.pdf: paper/src/REPORT.md $(FIGURE_PDFS)
 	$(PANDOC) $< --pdf-engine=$(PDF_ENGINE) -o $@
 
-# Put real input files for each figure here; replace DATA or add specific rules.
-figures/%.pdf: %.py $(DATA) pyproject.toml
+# Replace DATA with the real inputs for each figure, using separate rules if needed.
+paper/out/img/%.pdf: paper/src/%.py $(DATA) $(UTIL) pyproject.toml
 	$(PYTHON_RUN) $< $@
 
-# Optional alternate deliverables: make figures/example_figure.svg
-figures/%.svg figures/%.png: %.py $(DATA) pyproject.toml
+# Optional alternate formats: make paper/out/img/example_figure.svg
+paper/out/img/%.svg: paper/src/%.py $(DATA) $(UTIL) pyproject.toml
+	$(PYTHON_RUN) $< $@
+
+paper/out/img/%.png: paper/src/%.py $(DATA) $(UTIL) pyproject.toml
 	$(PYTHON_RUN) $< $@
 
 clean:
-	$(RM) $(REPORT).pdf $(addprefix figures/,$(foreach f,$(FIGURES),$(f).pdf $(f).svg $(f).png))
+	$(RM) REPORT.pdf paper/out/REPORT.pdf $(addprefix paper/out/img/,$(foreach f,$(FIGURES),$(f).pdf $(f).svg $(f).png))
