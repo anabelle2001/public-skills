@@ -1,0 +1,26 @@
+# Render with: d2 --layout elk relationships.d2 relationships.svg
+direction: down
+
+Viewer: {
+  shape: sql_table
+  image: "Image | None"
+  "current_image(self)": "→ Image"
+  "load_image(self, ...)": "(path: Path, channel: int) → Image"
+}
+
+Image: {
+  shape: sql_table
+  pixels: Pixels
+  regions: "list[Region]"
+  "from_file(cls, ...)": "(path: Path) → Self"
+}
+
+Pixels: {shape: sql_table}
+Region: {shape: sql_table}
+
+# Begin with bottom-to-top edge declarations, then inspect the rendered result.
+Viewer."load_image(self, ...)" -> Image
+Viewer."current_image(self)" -> Image
+Viewer.image -> Image
+Image.regions -> Region
+Image.pixels -> Pixels
